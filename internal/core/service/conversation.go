@@ -9,9 +9,9 @@ import (
 )
 
 type ConversationService struct {
-	ConversRepo  port.ConversationRepository
-	messageSv port.MessageService
-	promptSv port.PromptService
+	ConversRepo port.ConversationRepository
+	messageSv   port.MessageService
+	promptSv    port.PromptService
 	// cache port.CacheRepository
 }
 
@@ -25,7 +25,6 @@ func NewConversationService(ConversRepo port.ConversationRepository, messageSv p
 }
 
 func (cv *ConversationService) CreateConversation(ctx context.Context, conversation *domain.Conversation) (*domain.Conversation, error) {
-
 
 	// check prompt is exists
 
@@ -61,8 +60,6 @@ func (cv *ConversationService) CreateConversationWithMessage(ctx context.Context
 
 	return conversation, message, nil
 }
-
-
 
 func (cv *ConversationService) GetConversationById(ctx context.Context, conversationId uint64) (*domain.Conversation, error) {
 

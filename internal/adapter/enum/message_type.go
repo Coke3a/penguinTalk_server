@@ -13,11 +13,11 @@ const (
 )
 
 var MessageTypes = struct {
-	User     MessageType
-	Ai  MessageType
+	User MessageType
+	Ai   MessageType
 }{
-	User:     User,
-	Ai:  Ai,
+	User: User,
+	Ai:   Ai,
 }
 
 func (mt MessageType) String() string {

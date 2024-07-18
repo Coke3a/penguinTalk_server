@@ -44,7 +44,7 @@ func (cr *ConversationRepository) CreateConversation(ctx context.Context, conver
 		fmt.Println("Error during Scan:", err)
 		return nil, err
 	}
-	
+
 	return conversation, nil
 }
 

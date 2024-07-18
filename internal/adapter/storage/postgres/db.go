@@ -9,10 +9,10 @@ import (
 	"github.com/Coke3a/TalkPenguin/internal/adapter/config"
 	"github.com/Masterminds/squirrel"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres" // Import the postgres driver for golang-migrate
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres" // Import the postgres driver for golang-migrate
 )
 
 //go:embed migrations/*.sql

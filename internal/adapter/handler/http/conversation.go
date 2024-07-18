@@ -1,8 +1,8 @@
 package http
 
-import 	(
-	"github.com/Coke3a/TalkPenguin/internal/core/port"
+import (
 	"github.com/Coke3a/TalkPenguin/internal/core/domain"
+	"github.com/Coke3a/TalkPenguin/internal/core/port"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,8 +17,8 @@ func NewConversationHandler(svc port.ConversationService) *ConversationHandler {
 }
 
 type createConversationRequest struct {
-	UserId     uint64 `json:"user_id" binding:"required" example:"1"`
-	PromptId    uint64 `json:"prompt_id" binding:"required,email" example:"1"`
+	UserId   uint64 `json:"user_id" binding:"required" example:"1"`
+	PromptId uint64 `json:"prompt_id" binding:"required" example:"1"`
 }
 
 // Register godoc
@@ -44,8 +44,8 @@ func (ch *ConversationHandler) CreateConversation(ctx *gin.Context) {
 	}
 
 	conversation := domain.Conversation{
-		UserId:     req.UserId,
-		PromptId:    req.PromptId,
+		UserId:   req.UserId,
+		PromptId: req.PromptId,
 	}
 
 	_, err := ch.svc.CreateConversation(ctx, &conversation)
@@ -59,7 +59,6 @@ func (ch *ConversationHandler) CreateConversation(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
-
 func (ch *ConversationHandler) CreateConversationWithMessage(ctx *gin.Context) {
 	var req createConversationRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -68,8 +67,8 @@ func (ch *ConversationHandler) CreateConversationWithMessage(ctx *gin.Context) {
 	}
 
 	conversation := domain.Conversation{
-		UserId:     req.UserId,
-		PromptId:    req.PromptId,
+		UserId:   req.UserId,
+		PromptId: req.PromptId,
 	}
 
 	_, message, err := ch.svc.CreateConversationWithMessage(ctx, &conversation)

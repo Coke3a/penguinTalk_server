@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  api:
+    image: app:database
+    build: ./
+    port: 
+      - 8000:3000
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: go-pos_postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"

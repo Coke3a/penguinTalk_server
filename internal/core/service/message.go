@@ -10,14 +10,14 @@ import (
 )
 
 type MessageService struct {
-	messageRepo  port.MessageRepository
-	conversRepo  port.ConversationRepository
-	promptSv  port.PromptService
-	mtSv 		port.ModelTransactionService
+	messageRepo port.MessageRepository
+	conversRepo port.ConversationRepository
+	promptSv    port.PromptService
+	mtSv        port.ModelTransactionService
 	// cache port.CacheRepository
 }
 
-func NewMessageService(messageRepo port.MessageRepository, conversRepo  port.ConversationRepository, promptSv  port.PromptService, mtSv port.ModelTransactionService) *MessageService {
+func NewMessageService(messageRepo port.MessageRepository, conversRepo port.ConversationRepository, promptSv port.PromptService, mtSv port.ModelTransactionService) *MessageService {
 	return &MessageService{
 		messageRepo,
 		conversRepo,
@@ -27,15 +27,14 @@ func NewMessageService(messageRepo port.MessageRepository, conversRepo  port.Con
 	}
 }
 
-
-func (ms *MessageService) CreateMessage(ctx context.Context, conversation *domain.Conversation,  messageType enum.MessageType) (*domain.Message, error) {
+func (ms *MessageService) CreateMessage(ctx context.Context, conversation *domain.Conversation, messageType enum.MessageType) (*domain.Message, error) {
 
 	prompt, err := ms.promptSv.GetPrompt(ctx, conversation.PromptId)
 	if err != nil {
 		return nil, err
 	}
 
-	modelTransaction, err :=  ms.mtSv.RequestToModel(ctx, prompt.Prompt, prompt.Prompt2, nil)
+	modelTransaction, err := ms.mtSv.RequestToModel(ctx, prompt.Prompt, prompt.Prompt2, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -50,10 +49,10 @@ func (ms *MessageService) CreateMessage(ctx context.Context, conversation *domai
 	message := &domain.Message{
 		ConversationId: conversation.ConversationId,
 		UserId:         conversation.UserId,
-		MtId:			modelTransaction.MtId,
-		MessageText: generatedMessage,
-		MessageAudio: messageAudio,
-		MessageType: messageType,
+		MtId:           modelTransaction.MtId,
+		MessageText:    generatedMessage,
+		MessageAudio:   messageAudio,
+		MessageType:    messageType,
 	}
 	message, err = ms.messageRepo.SaveMessage(ctx, message)
 	if err != nil {
@@ -76,10 +75,10 @@ func (ms *MessageService) ExchangingMessage(ctx context.Context, message *domain
 	message = &domain.Message{
 		ConversationId: conversation.ConversationId,
 		UserId:         message.UserId,
-		MtId:			0,
-		MessageText: message.MessageText,
-		MessageAudio: message.MessageAudio,
-		MessageType: enum.MessageTypes.User,
+		MtId:           0,
+		MessageText:    message.MessageText,
+		MessageAudio:   message.MessageAudio,
+		MessageType:    enum.MessageTypes.User,
 	}
 
 	_, err = ms.messageRepo.SaveMessage(ctx, message)
@@ -99,13 +98,12 @@ func (ms *MessageService) ExchangingMessage(ctx context.Context, message *domain
 		return nil, domain.ErrInternal
 	}
 
-
 	prompt, err := ms.promptSv.GetPrompt(ctx, conversation.PromptId)
 	if err != nil {
 		return nil, err
 	}
 
-	modelTransaction, err :=  ms.mtSv.RequestToModel(ctx, prompt.Prompt, prompt.Prompt2, messages)
+	modelTransaction, err := ms.mtSv.RequestToModel(ctx, prompt.Prompt, prompt.Prompt2, messages)
 	if err != nil {
 		return nil, err
 	}
@@ -121,10 +119,10 @@ func (ms *MessageService) ExchangingMessage(ctx context.Context, message *domain
 	message = &domain.Message{
 		ConversationId: conversation.ConversationId,
 		UserId:         message.UserId,
-		MtId:      		modelTransaction.MtId,
-		MessageText: generatedMessage,
-		MessageAudio: messageAudio,
-		MessageType: enum.MessageTypes.Ai,
+		MtId:           modelTransaction.MtId,
+		MessageText:    generatedMessage,
+		MessageAudio:   messageAudio,
+		MessageType:    enum.MessageTypes.Ai,
 	}
 
 	message, err = ms.messageRepo.SaveMessage(ctx, message)
@@ -149,4 +147,18 @@ func (ms *MessageService) GetConversationById(ctx context.Context, conversationI
 	}
 
 	return conversation, nil
+}
+
+func (ms *MessageService) GetAllMessagesByConversationId(ctx context.Context, conversationId uint64) (*[]domain.Message, error) {
+
+	messages, err := ms.messageRepo.GetAllMessagesByConversationId(ctx, conversationId)
+	if err != nil {
+		slog.Error("Error message service", "error", err)
+		if err == domain.ErrConflictingData {
+			return nil, err
+		}
+		return nil, domain.ErrInternal
+	}
+
+	return &messages, nil
 }

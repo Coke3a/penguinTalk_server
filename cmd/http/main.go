@@ -7,11 +7,11 @@ import (
 	"os"
 
 	"github.com/Coke3a/TalkPenguin/internal/adapter/config"
+	"github.com/Coke3a/TalkPenguin/internal/adapter/handler/http"
 	"github.com/Coke3a/TalkPenguin/internal/adapter/storage/postgres"
 	"github.com/Coke3a/TalkPenguin/internal/adapter/storage/postgres/repository"
 	"github.com/Coke3a/TalkPenguin/internal/core/service"
-
-	"github.com/Coke3a/TalkPenguin/internal/core/domain"
+	// "github.com/Coke3a/TalkPenguin/internal/core/domain"
 )
 
 func main() {
@@ -48,15 +48,44 @@ func main() {
 	modelTransactionService := service.NewModelTransactionService(modelTransactionRepository)
 
 	conversationRepository := repository.NewConversationRepository(db)
-	
+
 	promptRepository := repository.NewPromptRepository(db)
 	promptService := service.NewPromptService(promptRepository)
 
 	messageRepository := repository.NewMessageRepository(db)
 	messageService := service.NewMessageService(messageRepository, conversationRepository, promptService, modelTransactionService)
+	messageHandler := http.NewMessageHandler(messageService)
+
+	conversationService := service.NewConversationService(conversationRepository, messageService, promptService)
+	conversationHandler := http.NewConversationHandler(conversationService)
+
+	userRepository := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepository)
+	userHandler := http.NewUserHandler(userService)
+
+	// Init router
+	router, err := http.NewRouter(
+		config.HTTP,
+		*messageHandler,
+		*conversationHandler,
+		*userHandler,
+	)
+	if err != nil {
+		slog.Error("Error initializing router", "error", err)
+		os.Exit(1)
+	}
+
+	// Start server
+	listenAddr := fmt.Sprintf("%s:%s", config.HTTP.URL, config.HTTP.Port)
+	slog.Info("Starting the HTTP server", "listen_address", listenAddr)
+	err = router.Serve(listenAddr)
+	if err != nil {
+		slog.Error("Error starting the HTTP server", "error", err)
+		os.Exit(1)
+	}
 
 	// conversationService := service.NewConversationService(conversationRepository, messageService, promptService)
-	
+
 	// conversation := domain.Conversation{
 	// 	UserId: 1,
 	// 	PromptId: 1,
@@ -64,7 +93,7 @@ func main() {
 
 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	// defer cancel()
-	
+
 	// conversationService.CreateConversation(ctx, &conversation)
 	// _, message, err := conversationService.CreateConversationWithMessage(ctx, &conversation)
 	// if (err != nil ) {
@@ -74,22 +103,19 @@ func main() {
 	// fmt.Println(message.MessageText)
 	// fmt.Println("Hello, World!")
 
+	// message := &domain.Message{
+	// 	ConversationId: 1,
+	// 	UserId: 1,
+	// 	MessageText: "I think I'll go to write the daily memo.",
+	// 	MessageAudio: "123456",
+	// }
 
-
-	
-	message := &domain.Message{
-		ConversationId: 1,
-		UserId: 1,
-		MessageText: "I think I'll go to write the daily memo.",
-		MessageAudio: "123456",
-	}
-
-	message, err = messageService.ExchangingMessage(ctx, message)
-	if (err != nil ) {
-		slog.Error("Error creating conversation", "error", err)
-		os.Exit(1)
-	}
-	fmt.Println(message.MessageText)
+	// message, err = messageService.ExchangingMessage(ctx, message)
+	// if (err != nil ) {
+	// 	slog.Error("Error creating conversation", "error", err)
+	// 	os.Exit(1)
+	// }
+	// fmt.Println(message.MessageText)
 	fmt.Println("Hello, World!")
 	// user_id, conversation_id message_text message_audio
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type PromptService struct {
-	repo  port.PromptRepository
+	repo port.PromptRepository
 	// cache port.CacheRepository
 }
 
@@ -18,7 +18,6 @@ func NewPromptService(repo port.PromptRepository) *PromptService {
 		// cache,
 	}
 }
-
 
 func (ps *PromptService) GetPrompt(ctx context.Context, promptId uint64) (*domain.Prompt, error) {
 
