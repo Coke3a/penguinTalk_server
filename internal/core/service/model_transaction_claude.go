@@ -127,7 +127,7 @@ func (mts *ModelTransactionService) RequestToModel(ctx context.Context, prompt s
 		return nil, err
 	}
 	// req.Header.Set("X-Api-Key", os.ExpandEnv("$ANTHROPIC_API_KEY"))
-	req.Header.Set("X-Api-Key", "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")
+	req.Header.Set("X-Api-Key", "{Key}")
 	req.Header.Set("Anthropic-Version", "2023-06-01")
 	req.Header.Set("Content-Type", "application/json")
 

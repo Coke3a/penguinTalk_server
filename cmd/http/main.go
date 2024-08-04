@@ -11,7 +11,6 @@ import (
 	"github.com/Coke3a/TalkPenguin/internal/adapter/storage/postgres"
 	"github.com/Coke3a/TalkPenguin/internal/adapter/storage/postgres/repository"
 	"github.com/Coke3a/TalkPenguin/internal/core/service"
-	// "github.com/Coke3a/TalkPenguin/internal/core/domain"
 )
 
 func main() {
@@ -84,38 +83,4 @@ func main() {
 		os.Exit(1)
 	}
 
-	// conversationService := service.NewConversationService(conversationRepository, messageService, promptService)
-
-	// conversation := domain.Conversation{
-	// 	UserId: 1,
-	// 	PromptId: 1,
-	// }
-
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-
-	// conversationService.CreateConversation(ctx, &conversation)
-	// _, message, err := conversationService.CreateConversationWithMessage(ctx, &conversation)
-	// if (err != nil ) {
-	// 	slog.Error("Error creating conversation", "error", err)
-	// 	os.Exit(1)
-	// }
-	// fmt.Println(message.MessageText)
-	// fmt.Println("Hello, World!")
-
-	// message := &domain.Message{
-	// 	ConversationId: 1,
-	// 	UserId: 1,
-	// 	MessageText: "I think I'll go to write the daily memo.",
-	// 	MessageAudio: "123456",
-	// }
-
-	// message, err = messageService.ExchangingMessage(ctx, message)
-	// if (err != nil ) {
-	// 	slog.Error("Error creating conversation", "error", err)
-	// 	os.Exit(1)
-	// }
-	// fmt.Println(message.MessageText)
-	fmt.Println("Hello, World!")
-	// user_id, conversation_id message_text message_audio
 }
